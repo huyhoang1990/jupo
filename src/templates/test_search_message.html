@@ -1,0 +1,24 @@
+<p>Danh sach cac tin nhan tim duoc:</p>
+	{% if not hits %}
+	  0 results for "{{ query }}"
+	{% elif hits | length == 1 %}
+	  1 results for "{{ query }}"
+	  {% for message in hits %}
+	  	<ul>
+	    {% for m in message%}
+	      <li>{{m.content}}</li>
+	    {% endfor %}
+	    </ul>
+	  {% endfor %}
+	{% else %}
+	  {{ total }} results for "{{ query }}"  
+	  {% for message in hits %}
+	  	<ul>
+	    {% for m in message%}
+	      <li>{{m.content}}</li>
+	    {% endfor %}
+	    </ul>
+	  {% endfor %}
+	  	
+	{% endif %}
+

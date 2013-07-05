@@ -161,6 +161,7 @@ def _render(info, post_type, owner, viewport, mode=None, **kwargs):
                                   view=viewport, 
                                   mode=mode, **kwargs)
     else:
+      info.message = unicode(str(info.message).replace(u'\xa0',u' '))
       html = FEED_TEMPLATE.render(feed=info, 
                                   owner=owner, 
                                   view=viewport, 
@@ -169,7 +170,7 @@ def _render(info, post_type, owner, viewport, mode=None, **kwargs):
     cache.set(key, html, 86400, namespace)
   else:
     hit = True
-
+    
   html = html.replace('<li id="post', 
                       '<li data-key="%s" data-namespace="%s" data-cache-status="%s" id="post' % (key, namespace, "HIT" if hit else "MISS"))
     
