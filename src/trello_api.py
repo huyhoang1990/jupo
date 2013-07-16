@@ -10,7 +10,7 @@ import api
 TRELLO_APP_KEY = '950ba9d46c41d2bf9de1e89b57df68ca'
 ID_BOARDS_JUPO = '51d6377f4b4cbf2f3f004068'
 TOKEN = '3dfd9ea21d521b3f019d9d1757cf4bc95f0044c12e9ac9af7ada1cafe6937a0d'
-URL_DATA = 'https://trello.com/1/boards/51d6377f4b4cbf2f3f004068?actions=all&actions_limit=10&key=%s&token%s' \
+URL_DATA = 'https://trello.com/1/boards/51d6377f4b4cbf2f3f004068?actions=all&actions_limit=20&key=%s&token%s' \
                 % (TRELLO_APP_KEY,TOKEN)
 
 # group jupo dev
@@ -21,8 +21,8 @@ ID_VIEWERS = [438236081108811777]
 # ID_VIEWERS = ['public']
 
 
-LENG_LIST_ID_IN_FILE = 5
-URL_JUPO = 'http://play.jupo.dev/sign_in'
+LENG_LIST_ID_IN_FILE = 20
+
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%S.%fZ'
 EMAIL_JUPO = 'trello@yahoo.com'
 PASS_JUPO = 'thieuchuthieuchu'
