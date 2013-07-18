@@ -123,6 +123,7 @@ invite_queue = Queue('invite')
 send_mail_queue = Queue('send_mail')
 move_to_s3_queue = Queue('move_to_s3')
 notification_queue = Queue('notification')
+notification_trello_queue = Queue('get_notifications_trello')
 
 
 def send_mail(to_addresses, subject=None, body=None, mail_type=None, 
@@ -3235,7 +3236,7 @@ def new_comment(session_id, message, ref_id,
                                 mail_type='mentions', 
                                 user_id=user_id, post=info, 
                                 db_name=db_name)
-    
+  
   
   receivers = [info.get('owner')]
   if info.get('comments'):
@@ -4525,10 +4526,10 @@ def update_group_info(session_id, group_id, info):
     return False
   if info.has_key('members'):
     info['members'] = [long(i) for i in info.get('members')]
-  
   db.owner.update({'leaders': user_id, 
                    '_id': long(group_id)}, {'$set': info})
   return True
+
 
 def join_group(session_id, group_id):
   db_name = get_database_name()
