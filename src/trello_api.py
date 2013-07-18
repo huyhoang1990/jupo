@@ -7,11 +7,13 @@ import requests
 import sys
 import re
 import api
-TRELLO_APP_KEY = '950ba9d46c41d2bf9de1e89b57df68ca'
-ID_BOARDS_JUPO = '51d6377f4b4cbf2f3f004068'
-TOKEN = '3dfd9ea21d521b3f019d9d1757cf4bc95f0044c12e9ac9af7ada1cafe6937a0d'
-URL_DATA = 'https://trello.com/1/boards/51d6377f4b4cbf2f3f004068?actions=all&actions_limit=20&key=%s&token%s' \
-                % (TRELLO_APP_KEY,TOKEN)
+from rq import Queue
+from compiler.syntax import check
+import time
+# TRELLO_APP_KEY = '950ba9d46c41d2bf9de1e89b57df68ca'
+# ID_BOARDS_JUPO = '51d6377f4b4cbf2f3f004068'
+# TOKEN = '3dfd9ea21d521b3f019d9d1757cf4bc95f0044c12e9ac9af7ada1cafe6937a0d'
+URL_DATA = 'https://trello.com/1/boards/%s?actions=all&actions_limit=20&key=%s&token%s'
 
 # group jupo dev
 ID_VIEWERS = [438236081108811777]
@@ -20,6 +22,9 @@ ID_VIEWERS = [438236081108811777]
 # ID_VIEWERS = [481392403568132097]
 # ID_VIEWERS = ['public']
 
+
+db_name = api.get_database_name()
+db = api.DATABASE[db_name]
 
 LENG_LIST_ID_IN_FILE = 20
 
@@ -142,35 +147,27 @@ class TrelloActionData(object):
     return self.data['checkItem']['state']
 
 
-def remove_id_from_file():
-  f = open('list_id_notification.txt','r+')
-  list_id_info = f.read()
-  list_id = list_id_info.split(' ')
-  if len(list_id) > LENG_LIST_ID_IN_FILE:
-    buf_list_id = list_id[len(list_id) - LENG_LIST_ID_IN_FILE - 1:]
-    buf_str = ' '.join(str(i) for i in buf_list_id)
-    f.truncate()
-    f.close()
-    f = open('list_id_notification.txt','w')
-    f.write(buf_str)
-  f.close()
-
+def check_new_notification(id_notification):
+  query = {'notification_trello': {'$elemMatch': {'id': id_notification}}}
+  info_query = db.owner.find_one(query)
+  if info_query:
+    return False
+  return True
   
-def get_notifications():
-  data = urllib.urlopen(URL_DATA).read()
+  
+  
+
+def get_notifications_trello(key_app_trello, token_trello, id_board_trello):
+  url_data = URL_DATA % (id_board_trello, key_app_trello, token_trello)
+  data = urllib.urlopen(url_data % ()).read()
   data = json.loads(data)
-  f = open('list_id_notification.txt','r+')
-  list_id_info = f.read()
-  list_id = []
-  try:
-    list_id = list_id_info.split(' ')
-  except:
-    pass
   list_message = []
+  list_new_id_notification = []
   for i in range(0,len(data['actions']) - 1):
     data_action = data['actions'][i]
     
-    if data_action['id'] not in list_id:
+    if check_new_notification(data_action['id']) == True:
+      list_new_id_notification.append(data_action['id'])
       data_action_before = data_action_after = None
       try:
         data_action_before = data['actions'][i-1]
@@ -189,8 +186,19 @@ def get_notifications():
         info_card['id'] = data_action['data']['card']['id']
         info_card['type'] = data_action['type']
         list_message.append(info_card)
-      f.write(data_action['id'] + ' ')
-  f.close()
+        
+  #day het id notification vao database
+  array_info = []
+  for id in list_new_id_notification:
+    info = {}
+    info['id'] = id
+    info['timestamp'] = time.time()
+    array_info.append(info)
+  
+  if array_info:
+    db.owner.update({'id_board_trello': id_board_trello}, 
+                    {'$pushAll': {'notification_trello': array_info}})
+  
   
   # UPDATE them truong id_card_trello toi id_post_message
   # moi commend.type ma la kieu comment thi tim feed
@@ -201,9 +209,27 @@ def get_notifications():
         api.add_id_trello_to_stream(id_post_message, info_card['id'])
     else:
       api.comment_message_trello(info_card['message'], info_card['id'])
-    
-  remove_id_from_file()
 
 
+def push_notification_trello():
+  query = {'key_app_trello': {'$exists': 'true'}}
+  groups = db.owner.find(query)
+  for group in groups:
+    if group.has_key('token_trello') and group.has_key('id_board_trello'):
+      key_app_trello = group['key_app_trello']
+      token_trello = group['token_trello']
+      id_board_trello = group['id_board_trello']
+      try:
+        api.notification_trello_queue.enqueue_call(func=get_notifications_trello, args=(key_app_trello,
+                                          token_trello, id_board_trello))
+      except Exception,e:
+        print e
+#       get_notifications_trello( key_app_trello,token_trello, id_board_trello)
+      
 if __name__ == '__main__':
-  get_notifications()
+  while(True):
+    push_notification_trello()
+    time.sleep(3*60)
+  
+  
+  
