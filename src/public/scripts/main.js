@@ -422,6 +422,13 @@ $(document).ready(function(e) {
        return false; 
     }
 
+    if (id == 'google-drive')
+      row_id = 'attach';
+    
+    if(($.global.uploader.is_uploading == true || id == 'google-drive') && $('tr#' + row_id, form).is(':visible') == true) {
+       return false; 
+    }
+    
     // deactive all actived
     $('tr.toggle:not(#' + row_id + ')', form).hide();
     $('footer a:not(#' + id + ')', form).removeClass('active');
@@ -2789,6 +2796,43 @@ $(document).ready(function(e) {
     }
   })
   
+  
+  function handle_auth_result(auth_result) {
+    show_picker_with_auth(auth_result.access_token);
+  }
+ 
+  function show_picker_with_auth(access_token) {
+    var picker = new google.picker.PickerBuilder().addView(google.picker.ViewId.DOCUMENTS).setAppId(1018167450671).setOAuthToken(access_token).setCallback(function(data) {
+      if (data[google.picker.Response.ACTION] == google.picker.Action.PICKED) {
+        file_picked(data[google.picker.Response.DOCUMENTS][0]);
+      }
+    }).build().setVisible(true);
+  }
+ 
+  function file_picked(doc) {
+    var id = doc[google.picker.Document.ID];
+    var request = gapi.client.request({
+      'path' : '/drive/v2/files/' + id,
+      'method' : 'GET',
+    });
+    request.execute(process_file);
+  }
+  
+  function process_file(file) {
+    var exportLink = file.alternateLink;
+    $('form#new-feed textarea.mention').val($('form#new-feed textarea.mention').val() + ' ' +exportLink + '\r\n');
+  }
+ 
+ 
+  $('#google-drive').on('click', function(e) {
+    gapi.client.setApiKey('qwertyuiop');
+    gapi.client.load('drive', 'v2');
+    gapi.auth.authorize({
+      client_id : '1018167450671-eb2at90i0reik9ogi74l8donhb9p6g3f.apps.googleusercontent.com',
+      scope : 'https://www.googleapis.com/auth/drive.readonly',
+      immediate : false
+    }, handle_auth_result);
+  })
   
   
  

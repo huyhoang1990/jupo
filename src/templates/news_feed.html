@@ -3,7 +3,7 @@
 
 {% if mode == 'view' %}
   <div id="page-header"></div>
-
+  
   {% autoescape on %}
     {% if 'public' in feed.viewer_ids %}
       {% set view = 'discover' %}
@@ -80,9 +80,8 @@
 </div>
 {% endif %}
 
-
-  <div id="page-header"></div>
   
+  <div id="page-header"></div>
   {% include 'new.html' %}
   
   <div id='filters' class='options'>

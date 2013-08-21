@@ -3247,7 +3247,7 @@ def run_app(debug=False):
   
   
 if __name__ == "__main__":
-  run_app(debug=False)
+  run_app(debug=True)
 
 
 
