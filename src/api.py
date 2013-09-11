@@ -4317,8 +4317,8 @@ def new_file(session_id, attachment_id, viewers=None):
   file_id = db.stream.insert(info)
   
   name = get_attachment_info(attachment_id).name
-  
-  index_queue.enqueue(add_index, file_id, name, viewers, 'file', db_name)
+  if len(viewers) > 1:
+    index_queue.enqueue(add_index, file_id, name, viewers, 'file', db_name)
   
   
   # clear news feed cache
