@@ -150,9 +150,8 @@ def send_mail(to_addresses, subject=None, body=None, mail_type=None,
     # support subdir instead of subdomain ( jupo.com/your-net-work instead of your-network.jupo.com )
     user_domain = to_addresses.split('@')[1]
     domain = '%s/%s' % (settings.PRIMARY_DOMAIN, user_domain)
-
     template = app.CURRENT_APP.jinja_env.get_template('email/invite.html')
-    body = template.render(domain=domain, **kwargs)
+    body = template.render(domain=domain, to_addresses=to_addresses, **kwargs)
     
   elif mail_type == 'forgot_password':
     subject = 'Your password on Jupo'
@@ -916,10 +915,10 @@ def invite(session_id, email, group_id=None, msg=None, db_name=None):
   else:
     group = Group({})
     
-
   send_mail_queue.enqueue(send_mail, email, 
-                          mail_type='invite', 
-                          code=code, 
+                          mail_type='invite',
+                          code=code,
+                          avatar=user.avatar, 
                           is_new_user=is_new_user,
                           user_id=user.id,
                           username=user.name, 
