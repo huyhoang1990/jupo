@@ -157,7 +157,6 @@ def google_authorized():
                  'function_name': 'get_user_info',
                  'error': 0}
   
-  print info_return
   
   resp = Response(render_template('mobile/template_push_mobile.html',
                                   info_push_to_mobile=dumps(info_return)))
