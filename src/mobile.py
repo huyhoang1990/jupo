@@ -127,9 +127,9 @@ def google_authorized():
           'token_type': 'session',
           'unread_notifications': unread_notifications}
   
-  resp = Response(dumps(data), mimetype='application/json')
+  resp = Response(render_template('mobile/template_push_mobile.html',
+                                  info_push_to_mobile=dumps(data)))
   return resp
-
 
 
 @app.route('/get_user_info')
@@ -336,7 +336,7 @@ if __name__ == "__main__":
       
     app.debug = debug
     
-    server = wsgiserver.CherryPyWSGIServer(('0.0.0.0', 9008), app)
+    server = wsgiserver.CherryPyWSGIServer(('0.0.0.0', 9000), app)
     try:
       print 'Serving HTTP on 0.0.0.0 port 9008...'
       server.start()
