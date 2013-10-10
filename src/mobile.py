@@ -217,27 +217,38 @@ def news_feed(page=1):
 
 @app.route("/group/<int:group_id>", methods=["GET", "OPTIONS"])
 def group(group_id=None, view='group', page=1):
-  session_id = request.args.get('session_id')
-  network = request.args.get('network')
-  utcoffset = request.args.get('utcoffset')
+  authorization = request.headers.get('Authorization')
+  app.logger.debug(request.headers.items())
+  
+  if not authorization or not authorization.startswith('session '):
+    abort(401)
+  
+  session = SecureCookie.unserialize(authorization.split()[-1], 
+                                     settings.SECRET_KEY)
+  
+  session_id = session.get('session_id')
+  network = session.get('network')
+#   utcoffset = session.get('utcoffset')
+
   db_name = '%s_%s' % (network.replace('.', '_'), 
                        settings.PRIMARY_DOMAIN.replace('.', '_'))
-  owner = api.get_owner_info(session_id, db_name=db_name)
-  if not owner.id:
-    return redirect_to('/oauth/google')
   
+  user_id = api.get_user_id(session_id, db_name=db_name)
+  if not user_id:
+    abort(401)
+  
+  owner = api.get_user_info(user_id, db_name=db_name)
   group = api.get_group_info(session_id, group_id, db_name=db_name)
   feeds = api.get_feeds(session_id, group_id,
                         page=page, db_name=db_name)
-    
-  body = render_template('mobile/group_mobile.html', 
+  
+  body = render_template('mobile/group.html', 
                           feeds=feeds, 
                           group=group,
                           owner=owner,
                           settings=settings,
                           view=view)
         
-  return body
   
   
   
