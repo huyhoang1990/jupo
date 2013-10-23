@@ -185,5 +185,48 @@ $(document).ready(function() {
     
     return false;
   });
-
+  
+  $('ul.stream').on("tap", 'a.view-previous-comments', function(e) {
+    var _this = $(this);
+    var post_id = _this.parents('li.feed').attr('id');
+    
+    // Show preloaded comments
+    $('#' + post_id + ' ul.comments li.comment.hidden').removeClass('hidden');
+    
+    var displayed_count = $('#' + post_id + ' ul.comments li.comment:not(.hidden)').length;
+    $('.displayed-count', _this).html(displayed_count);
+    
+    var undisplayed_count = $('.comment-count', _this).html() - displayed_count;
+    if (undisplayed_count <= 0) {
+      _this.parent().remove();
+    }
+    else if (undisplayed_count > 5) {
+      $('text', _this).html('View previous comments');
+    } else {
+      $('text', _this).html('View ' + undisplayed_count + ' more comments');
+    }
+    if (_this.attr('href') != undefined) {
+      $.ajax({
+        type: "OPTIONS",
+        url: _this.attr('href'),
+        dataType: "json",
+        success: function(data) {
+          
+          if (data.next_url < 5) {
+            _this.attr('href', '#');
+          } else {
+            _this.attr('href', data.next_url);
+          }
+          
+          $('.comment-count', _this).html(data.comments_count);
+          
+          $('#' + post_id + ' ul.comments li.comment:first').before(data.html);
+          refresh('#' + post_id + ' ul.comments');
+          return false;
+        }
+      });
+    }
+      
+  });
+    
 });
