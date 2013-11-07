@@ -2231,8 +2231,7 @@ def network():
                            domain=domain,
                            subdomain=subdomain,
                            message=msg)
-
-
+    
 
 @app.route("/everyone", methods=["GET", "OPTIONS"])
 @app.route("/everyone/page<int:page>", methods=["GET", "OPTIONS"])
