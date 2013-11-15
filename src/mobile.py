@@ -50,12 +50,16 @@ def stream():
   else:
     authorization = request.headers.get('Authorization')
     if not authorization or not authorization.startswith('session '):
-      abort(401)
+      data = {'title': 'Authorization', 
+              'msg': 'Your account has been logged out on another device'}
+      return render_template('mobile/alert.html', data=dumps(data))
       
     data = SecureCookie.unserialize(authorization.split()[-1], 
                                     settings.SECRET_KEY)
     if not data:
-      abort(401)
+      data = {'title': 'Authorization', 
+              'msg': 'Your account has been logged out on another device'}
+      return render_template('mobile/alert.html', data=dumps(data))
     
   session_id = data.get('session_id')
   channel_id = data.get('channel_id')
@@ -81,7 +85,9 @@ def stream():
 def public_files(filename):
   path = os.path.join(os.path.dirname(__file__), 'public', filename)
   if not os.path.exists(path):
-    abort(404, 'File not found')
+    data = {'title': 'Error', 
+              'msg': 'Oops, Somthing went wrong'}
+    return render_template('mobile/alert.html', data=dumps(data))
   filedata = open(path).read()  
       
   resp = Response(filedata)
@@ -233,12 +239,16 @@ def get_user_info():
   else:
     authorization = request.headers.get('Authorization')
     if not authorization or not authorization.startswith('session '):
-      abort(401)
+      data = {'title': 'Authorization', 
+              'msg': 'Your account has been logged out on another device'}
+      return render_template('mobile/alert.html', data=dumps(data))
       
     data = SecureCookie.unserialize(authorization.split()[-1], 
                                     settings.SECRET_KEY)
     if not data:
-      abort(401)
+      data = {'title': 'Authorization', 
+              'msg': 'Your account has been logged out on another device'}
+      return render_template('mobile/alert.html', data=dumps(data))
     
   session_id = data.get('session_id')
   network = data.get('network')
@@ -273,12 +283,16 @@ def user(user_id=None, page=1, action=None):
   else:
     authorization = request.headers.get('Authorization')
     if not authorization or not authorization.startswith('session '):
-      abort(401)
+      data = {'title': 'Authorization', 
+              'msg': 'Your account has been logged out on another device'}
+      return render_template('mobile/alert.html', data=dumps(data))
       
     data = SecureCookie.unserialize(authorization.split()[-1], 
                                     settings.SECRET_KEY)
     if not data:
-      abort(401)
+      data = {'title': 'Authorization', 
+              'msg': 'Your account has been logged out on another device'}
+      return render_template('mobile/alert.html', data=dumps(data))
   
   session_id = data.get('session_id')
   network = data.get('network')
@@ -291,7 +305,9 @@ def user(user_id=None, page=1, action=None):
 
   user_id = api.get_user_id(session_id, db_name=db_name)
   if not user_id:
-    abort(401)
+    data = {'title': 'Authorization', 
+              'msg': 'Your account has been logged out on another device'}
+    return render_template('mobile/alert.html', data=dumps(data))
 
   owner = api.get_user_info(user_id, db_name=db_name)
     
@@ -346,12 +362,16 @@ def menu():
   else:
     authorization = request.headers.get('Authorization')
     if not authorization or not authorization.startswith('session '):
-      abort(401)
+      data = {'title': 'Authorization', 
+              'msg': 'Your account has been logged out on another device'}
+      return render_template('mobile/alert.html', data=dumps(data))
       
     data = SecureCookie.unserialize(authorization.split()[-1], 
                                     settings.SECRET_KEY)
     if not data:
-      abort(401)
+      data = {'title': 'Authorization', 
+              'msg': 'Your account has been logged out on another device'}
+      return render_template('mobile/alert.html', data=dumps(data))
     
   session_id = data.get('session_id')
   network = data.get('network')
@@ -362,7 +382,9 @@ def menu():
 
   user_id = api.get_user_id(session_id, db_name=db_name)
   if not user_id:
-    abort(401)
+    data = {'title': 'Authorization', 
+              'msg': 'Your account has been logged out on another device'}
+    return render_template('mobile/alert.html', data=dumps(data))
   
   owner = api.get_user_info(user_id, db_name=db_name)
   
@@ -378,12 +400,17 @@ def news_feed(page=1, feed_id=None):
   else:
     authorization = request.headers.get('Authorization')
     if not authorization or not authorization.startswith('session '):
-      abort(401)
+      data = {'title': 'Authorization', 
+              'msg': 'Your account has been logged out on another device'}
+      return render_template('mobile/alert.html', data=dumps(data))
+
        
     data = SecureCookie.unserialize(authorization.split()[-1], 
                                     settings.SECRET_KEY)
     if not data:
-      abort(401)
+      data = {'title': 'Authorization', 
+              'msg': 'Your account has been logged out on another device'}
+      return render_template('mobile/alert.html', data=dumps(data))
      
   session_id = data.get('session_id')
   network = data.get('network')
@@ -392,7 +419,9 @@ def news_feed(page=1, feed_id=None):
 
   user_id = api.get_user_id(session_id, db_name=db_name)
   if not user_id:
-    abort(401)
+    data = {'title': 'Authorization', 
+              'msg': 'Your account has been logged out on another device'}
+    return render_template('mobile/alert.html', data=dumps(data))
   
   owner = api.get_user_info(user_id, db_name=db_name)
   is_android = False
@@ -441,12 +470,16 @@ def group(group_id='public', action='group', page=1):
   else:
     authorization = request.headers.get('Authorization')
     if not authorization or not authorization.startswith('session '):
-      abort(401)
+      data = {'title': 'Authorization', 
+              'msg': 'Your account has been logged out on another device'}
+      return render_template('mobile/alert.html', data=dumps(data))
       
     data = SecureCookie.unserialize(authorization.split()[-1], 
                                     settings.SECRET_KEY)
     if not data:
-      abort(401)
+      data = {'title': 'Authorization', 
+              'msg': 'Your account has been logged out on another device'}
+      return render_template('mobile/alert.html', data=dumps(data))
     
   session_id = data.get('session_id')
   network = data.get('network')
@@ -457,7 +490,9 @@ def group(group_id='public', action='group', page=1):
   
   user_id = api.get_user_id(session_id, db_name=db_name)
   if not user_id:
-    abort(401)
+    data = {'title': 'Authorization', 
+              'msg': 'Your account has been logged out on another device'}
+    return render_template('mobile/alert.html', data=dumps(data))
   owner = api.get_user_info(user_id, db_name=db_name)
   is_android = False
   device_id = session.get('device_id')
@@ -484,7 +519,9 @@ def group(group_id='public', action='group', page=1):
     return 'OK'
   
   if not group.id:
-    abort(401)
+    data = {'title': 'Authorization', 
+              'msg': 'Your account has been logged out on another device'}
+    return render_template('mobile/alert.html', data=dumps(data))
     
   if group_id == 'public':
     feeds = api.get_public_posts(session_id, page=page, db_name=db_name)
@@ -508,12 +545,16 @@ def network(domain=None):
   else:
     authorization = request.headers.get('Authorization')
     if not authorization or not authorization.startswith('session '):
-      abort(401)
+      data = {'title': 'Authorization', 
+              'msg': 'Your account has been logged out on another device'}
+      return render_template('mobile/alert.html', data=dumps(data))
        
     data = SecureCookie.unserialize(authorization.split()[-1], 
                                     settings.SECRET_KEY)
     if not data:
-      abort(401)
+      data = {'title': 'Authorization', 
+              'msg': 'Your account has been logged out on another device'}
+      return render_template('mobile/alert.html', data=dumps(data))
      
   session_id = data.get('session_id')
   network = data.get('network')
@@ -522,7 +563,9 @@ def network(domain=None):
                        settings.PRIMARY_DOMAIN.replace('.', '_'))
   user_id = api.get_user_id(session_id, db_name=db_name)
   if not user_id:
-    abort(401)
+    data = {'title': 'Authorization', 
+              'msg': 'Your account has been logged out on another device'}
+    return render_template('mobile/alert.html', data=dumps(data))
   owner = api.get_user_info(user_id, db_name=db_name)
   
   if request.path.startswith('/networks'):
@@ -531,7 +574,9 @@ def network(domain=None):
                            owner=owner)
   
   if not domain:
-    abort(401)
+    data = {'title': 'Authorization', 
+              'msg': 'Your account has been logged out on another device'}
+    return render_template('mobile/alert.html', data=dumps(data))
   
 #   db_name = domain.replace('.', '_')
 #   network = api.get_network_by_current_hostname(domain)
@@ -549,7 +594,9 @@ def network(domain=None):
                                        google_contacts=owner.google_contacts,
                                        db_name=db_name)
   if not session_id:
-    abort(500)
+    data = {'title': 'Error', 
+              'msg': 'Oops, Somthing went wrong'}
+    return render_template('mobile/alert.html', data=dumps(data))
   
   unread_notifications = api.get_unread_notifications_count(session_id,
                                                             db_name=db_name)
@@ -586,12 +633,16 @@ def like(item_id):
   else:
     authorization = request.headers.get('Authorization')
     if not authorization or not authorization.startswith('session '):
-      abort(401)
+      data = {'title': 'Authorization', 
+              'msg': 'Your account has been logged out on another device'}
+      return render_template('mobile/alert.html', data=dumps(data))
        
     data = SecureCookie.unserialize(authorization.split()[-1], 
                                     settings.SECRET_KEY)
     if not data:
-      abort(401)
+      data = {'title': 'Authorization', 
+              'msg': 'Your account has been logged out on another device'}
+      return render_template('mobile/alert.html', data=dumps(data))
      
   session_id = data.get('session_id')
   network = data.get('network')
@@ -601,7 +652,9 @@ def like(item_id):
   
   user_id = api.get_user_id(session_id, db_name=db_name)
   if not user_id:
-    abort(401)
+    data = {'title': 'Authorization', 
+              'msg': 'Your account has been logged out on another device'}
+    return render_template('mobile/alert.html', data=dumps(data))
    
   owner = api.get_user_info(user_id, db_name=db_name)
   post_id = item_id
@@ -625,12 +678,16 @@ def notifications():
   else:
     authorization = request.headers.get('Authorization')
     if not authorization or not authorization.startswith('session '):
-      abort(401)
+      data = {'title': 'Authorization', 
+              'msg': 'Your account has been logged out on another device'}
+      return render_template('mobile/alert.html', data=dumps(data))
       
     data = SecureCookie.unserialize(authorization.split()[-1], 
                                     settings.SECRET_KEY)
     if not data:
-      abort(401)
+      data = {'title': 'Authorization', 
+              'msg': 'Your account has been logged out on another device'}
+      return render_template('mobile/alert.html', data=dumps(data))
     
   session_id = data.get('session_id')
   network = data.get('network')
@@ -641,7 +698,9 @@ def notifications():
 
   user_id = api.get_user_id(session_id, db_name=db_name)
   if not user_id:
-    abort(401)
+    data = {'title': 'Authorization', 
+              'msg': 'Your account has been logged out on another device'}
+    return render_template('mobile/alert.html', data=dumps(data))
     
   owner = api.get_user_info(user_id, db_name=db_name)
   
@@ -662,12 +721,16 @@ def notification(notification_id=None, ref_id=None):
   else:
     authorization = request.headers.get('Authorization')
     if not authorization or not authorization.startswith('session '):
-      abort(401)
+      data = {'title': 'Authorization', 
+              'msg': 'Your account has been logged out on another device'}
+      return render_template('mobile/alert.html', data=dumps(data))
       
     data = SecureCookie.unserialize(authorization.split()[-1], 
                                     settings.SECRET_KEY)
     if not data:
-      abort(401)
+      data = {'title': 'Authorization', 
+              'msg': 'Your account has been logged out on another device'}
+      return render_template('mobile/alert.html', data=dumps(data))
     
   session_id = data.get('session_id')
   
@@ -687,12 +750,16 @@ def sidebar():
   else:
     authorization = request.headers.get('Authorization')
     if not authorization or not authorization.startswith('session '):
-      abort(401)
+      data = {'title': 'Authorization', 
+              'msg': 'Your account has been logged out on another device'}
+      return render_template('mobile/alert.html', data=dumps(data))
        
     data = SecureCookie.unserialize(authorization.split()[-1], 
                                     settings.SECRET_KEY)
     if not data:
-      abort(401)
+      data = {'title': 'Authorization', 
+              'msg': 'Your account has been logged out on another device'}
+      return render_template('mobile/alert.html', data=dumps(data))
      
   session_id = data.get('session_id')
   network = data.get('network')
@@ -701,7 +768,9 @@ def sidebar():
   
   user_id = api.get_user_id(session_id, db_name=db_name)
   if not user_id:
-    abort(401)
+    data = {'title': 'Authorization', 
+              'msg': 'Your account has been logged out on another device'}
+    return render_template('mobile/alert.html', data=dumps(data))
    
   owner = api.get_user_info(user_id, db_name=db_name)
   return render_template('mobile/sidebar.html', owner=owner)
